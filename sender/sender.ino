@@ -19,6 +19,7 @@ const char* serverAddress = "http://192.168.8.187:30001";
 
 const char *mqtt_broker = "192.168.235.221";
 const char *topic = "senderState";
+const char *topic0 = "Connected";
 //const char *mqtt_username = "emqx";
 //const char *mqtt_password = "public";
 const int mqtt_port = 1883;
@@ -72,7 +73,7 @@ void setup() {
       }
   }
   // Publish and subscribe
-  client.publish(topic, "Hi, I'm ESP32 ^^");
+  client.publish(topic0, "Hi, I'm ESP32 ^^");
   client.subscribe(topic);
   
 }
@@ -103,7 +104,7 @@ void callback(char *topic, byte *payload, unsigned int length) {
         }
 
         // Extract state and comment
-        bool state = doc["state"];
+        bool state = doc["state"];  
         comment = doc["Comment"].as<String>();
 
         // Set senderState based on the received state
