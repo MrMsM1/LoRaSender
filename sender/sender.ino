@@ -104,8 +104,8 @@ void callback(char *topic, byte *payload, unsigned int length) {
         }
 
         // Extract state and comment
-        bool state = doc["state"];  
-        comment = doc["Comment"].as<String>();
+        bool state = doc["senderState"];  
+        comment = doc["comment"].as<String>();
 
         // Set senderState based on the received state
         senderState = state;
@@ -119,7 +119,7 @@ void callback(char *topic, byte *payload, unsigned int length) {
 
 
 void sendMessage(){
-  Serial.print("Sending packet: ");
+  Serial.print("Sender Sending packet: ");
   Serial.println(counter);
 
   // Sending LoRa packet to receiver
@@ -128,10 +128,19 @@ void sendMessage(){
   LoRa.endPacket();
   counter++;
 }
+int count = 0;
 void loop() {
   client.loop();
   if(senderState){
-    sendMessage();
-    delay(1000);
+    
+    
+    if(count == 2){
+      senderState = false;
+      count = 0;
+    }else{
+      delay(2000);
+      sendMessage();
+    }
+    count++;
   }
 }
