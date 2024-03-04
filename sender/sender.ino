@@ -24,8 +24,8 @@ const char *topic0 = "Connected";
 //const char *mqtt_password = "public";
 const int mqtt_port = 1883;
 
-WiFiClient espClient;
-PubSubClient client(espClient);
+//WiFiClient espClient;
+//PubSubClient client(espClient);
 
 void setup() {
   // Initializing Serial Monitor
@@ -49,32 +49,32 @@ void setup() {
   LoRa.setSyncWord(0xF3);
   Serial.println("LoRa Initializing OK!");
 
-  // Connect to Wi-Fi
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi...");
-  }
-  Serial.println("Connected to WiFi");
+//  // Connect to Wi-Fi
+//  WiFi.begin(ssid, password);
+//  while (WiFi.status() != WL_CONNECTED) {
+//    delay(1000);
+//    Serial.println("Connecting to WiFi...");
+//  }
+//  Serial.println("Connected to WiFi");
 
-  //connecting to a mqtt broker
-  client.setServer(mqtt_broker, mqtt_port);
-  client.setCallback(callback);
-  while (!client.connected()) {
-      String client_id = "esp32-client-";
-      client_id += String(WiFi.macAddress());
-      Serial.printf("The client %s connects to the public MQTT broker\n", client_id.c_str());
-      if (client.connect(client_id.c_str())) {
-          Serial.println("Public EMQX MQTT broker connected");
-      } else {
-          Serial.print("failed with state ");
-          Serial.print(client.state());
-          delay(2000);
-      }
-  }
-  // Publish and subscribe
-  client.publish(topic0, "Hi, I'm ESP32 ^^");
-  client.subscribe(topic);
+//  //connecting to a mqtt broker
+//  client.setServer(mqtt_broker, mqtt_port);
+//  client.setCallback(callback);
+//  while (!client.connected()) {
+//      String client_id = "esp32-client-";
+//      client_id += String(WiFi.macAddress());
+//      Serial.printf("The client %s connects to the public MQTT broker\n", client_id.c_str());
+//      if (client.connect(client_id.c_str())) {
+//          Serial.println("Public EMQX MQTT broker connected");
+//      } else {
+//          Serial.print("failed with state ");
+//          Serial.print(client.state());
+//          delay(2000);
+//      }
+//  }
+//  // Publish and subscribe
+//  client.publish(topic0, "Hi, I'm ESP32 ^^");
+//  client.subscribe(topic);
   
 }
 
@@ -121,24 +121,24 @@ void callback(char *topic, byte *payload, unsigned int length) {
 void sendMessage(){
   Serial.print("Sender Sending packet: ");
   Serial.println(counter);
-
+  Serial.println(comment);
   // Sending LoRa packet to receiver
   LoRa.beginPacket();
   LoRa.print("{\"Data\":\"S0 \",\"Comment\":\"" + String(comment) + "\"}");
-  LoRa.endPacket();
+  LoRa.endPacket(true);
   counter++;
+  Serial.println("send completed");
 }
 int count = 0;
 void loop() {
-  client.loop();
+//  client.loop();
   if(senderState){
     
     
     if(count == 2){
-      senderState = false;
       count = 0;
     }else{
-      delay(2000);
+      delay(1000);
       sendMessage();
     }
     count++;
